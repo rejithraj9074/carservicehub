@@ -1,0 +1,251 @@
+/* Navbar Styles - Professional Black & White Design */
+.navbar {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.navbar-scrolled {
+  background: rgba(0, 0, 0, 0.98);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.navbar-logo {
+  width: 40px;
+  height: 40px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.navbar-logo-icon {
+  font-size: 1.5rem;
+  color: #000000;
+}
+
+.navbar-brand-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+.navbar-nav a:hover {
+  color: #cccccc;
+}
+
+.navbar-nav a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #ffffff;
+  transition: width 0.3s ease;
+  border-radius: 1px;
+}
+
+.navbar-nav a:hover::after {
+  width: 100%;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-button {
+  padding: 0.5rem 1.25rem !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  font-size: 0.9rem !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Primary button (white background, black text) */
+.navbar-button-primary {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+.navbar-button-primary:hover {
+  background: #f0f0f0 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Secondary button (bordered white) */
+.navbar-button-secondary {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+.navbar-button-secondary:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+  transform: translateY(-1px);
+}
+
+/* Mobile Toggle */
+.navbar-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.navbar-mobile-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #cccccc;
+}
+
+/* Mobile Menu */
+.navbar-mobile-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.98);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  padding: 1rem 0;
+}
+
+.navbar-mobile-menu.open {
+  display: block;
+}
+
+.navbar-mobile-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-mobile-nav li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-mobile-nav a {
+  display: block;
+  padding: 1rem 2rem;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.navbar-mobile-nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #cccccc;
+  padding-left: 2.5rem;
+}
+
+.navbar-mobile-actions {
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.navbar-mobile-button {
+  width: 100%;
+  padding: 0.75rem !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  font-size: 0.9rem !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-nav {
+    display: none;
+  }
+  
+  .navbar-actions {
+    display: none;
+  }
+  
+  .navbar-mobile-toggle {
+    display: block;
+  }
+  
+  .navbar-brand-text {
+    font-size: 1rem;
+  }
+  
+  .navbar-logo {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .navbar-logo-icon {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .navbar-mobile-toggle {
+    display: none;
+  }
+  
+  .navbar-mobile-menu {
+    display: none !important;
+  }
+}

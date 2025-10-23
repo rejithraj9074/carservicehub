@@ -1,0 +1,63 @@
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# Environment files
+
+
+# Build outputs
+dist/
+build/
+
+# System files
+.DS_Store
+Thumbs.db
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+build/
+dist/
+.next/
+.out/
+coverage/
+
+# Caches
+.cache/
+.parcel-cache/
+.turbo/
+
+# Env files
+.env
+.env.*
+.env.local
+.env.*.local
+backend/.env
+backend/.env.*
+backend/.env.local
+backend/.env.*.local
+frontend/.env
+frontend/.env.*
+frontend/.env.local
+frontend/.env.*.local
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Tools/deploy
+.vercel/
+.netlify/
+
+# Misc
+logs/
+*.log
+*.sqlite
