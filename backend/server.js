@@ -49,8 +49,23 @@ app.use(express.json()); // parse JSON
 if (environment === 'production') {
   // In production, only allow requests from your frontend domain
   // You'll need to replace 'your-frontend-url.onrender.com' with your actual frontend URL
+  const allowedOrigins = [
+    process.env.FRONTEND_URL || "https://your-frontend-url.onrender.com",
+    "http://localhost:3000", // For local development
+    "http://localhost:5000"  // For local backend testing
+  ];
+  
   app.use(cors({
-    origin: process.env.FRONTEND_URL || "https://your-frontend-url.onrender.com",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   }));
 } else {
