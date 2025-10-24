@@ -27,160 +27,201 @@ function handleAuthError(status) {
 
 // Public POST request (no authentication)
 export async function postJsonPublic(path, body) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body),
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
-    const error = new Error(message);
-    error.status = response.status;
-    error.data = data;
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
+      const error = new Error(message);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error(`Error in postJsonPublic to ${path}:`, error);
     throw error;
   }
-  return data;
 }
 
 export async function postMultipart(path, formData) {
-  const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers: {
-      ...(token && { "Authorization": `Bearer ${token}` })
-    },
-    body: formData,
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    handleAuthError(response.status);
-    const details = Array.isArray(data?.errors)
-      ? data.errors.map((e) => `${e.path || e.param || 'field'}: ${e.msg || e.message}`).join('; ')
-      : (typeof data?.error === 'string' ? data.error : undefined);
-    const message = details
-      ? `${data?.message || 'Request failed'} - ${details}`
-      : (typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`);
-    const error = new Error(message);
-    error.status = response.status;
-    error.data = data;
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      headers: {
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+      body: formData,
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      handleAuthError(response.status);
+      const details = Array.isArray(data?.errors)
+        ? data.errors.map((e) => `${e.path || e.param || 'field'}: ${e.msg || e.message}`).join('; ')
+        : (typeof data?.error === 'string' ? data.error : undefined);
+      const message = details
+        ? `${data?.message || 'Request failed'} - ${details}`
+        : (typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`);
+      const error = new Error(message);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error(`Error in postMultipart to ${path}:`, error);
     throw error;
   }
-  return data;
 }
 
 export async function putMultipart(path, formData) {
-  const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "PUT",
-    headers: {
-      ...(token && { "Authorization": `Bearer ${token}` })
-    },
-    body: formData,
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    handleAuthError(response.status);
-    const details = Array.isArray(data?.errors)
-      ? data.errors.map((e) => `${e.path || e.param || 'field'}: ${e.msg || e.message}`).join('; ')
-      : (typeof data?.error === 'string' ? data.error : undefined);
-    const message = details
-      ? `${data?.message || 'Request failed'} - ${details}`
-      : (typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`);
-    const error = new Error(message);
-    error.status = response.status;
-    error.data = data;
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "PUT",
+      headers: {
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+      body: formData,
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      handleAuthError(response.status);
+      const details = Array.isArray(data?.errors)
+        ? data.errors.map((e) => `${e.path || e.param || 'field'}: ${e.msg || e.message}`).join('; ')
+        : (typeof data?.error === 'string' ? data.error : undefined);
+      const message = details
+        ? `${data?.message || 'Request failed'} - ${details}`
+        : (typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`);
+      const error = new Error(message);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error(`Error in putMultipart to ${path}:`, error);
     throw error;
   }
-  return data;
 }
 
 export async function getJson(path) {
-  const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "GET",
-    headers: { 
-      "Content-Type": "application/json",
-      ...(token && { "Authorization": `Bearer ${token}` })
-    },
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    handleAuthError(response.status);
-    const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
-    const error = new Error(message);
-    error.status = response.status;
-    error.data = data;
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "GET",
+      headers: { 
+        "Content-Type": "application/json",
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      handleAuthError(response.status);
+      const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
+      const error = new Error(message);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error(`Error in getJson from ${path}:`, error);
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error: Unable to connect to the server. Please check your internet connection and ensure the server is running.');
+    }
     throw error;
   }
-  return data;
 }
 
 export async function deleteJson(path) {
-  const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { "Authorization": `Bearer ${token}` })
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { "Authorization": `Bearer ${token}` })
+      }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      handleAuthError(response.status);
+      const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
+      const error = new Error(message);
+      error.status = response.status;
+      error.data = data;
+      throw error;
     }
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    handleAuthError(response.status);
-    const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
-    const error = new Error(message);
-    error.status = response.status;
-    error.data = data;
+    return data;
+  } catch (error) {
+    console.error(`Error in deleteJson from ${path}:`, error);
     throw error;
   }
-  return data;
 }
 
 export async function postJson(path, body) {
-  const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      ...(token && { "Authorization": `Bearer ${token}` })
-    },
-    body: JSON.stringify(body),
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    handleAuthError(response.status);
-    const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
-    const error = new Error(message);
-    error.status = response.status;
-    error.data = data;
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      handleAuthError(response.status);
+      const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
+      const error = new Error(message);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error(`Error in postJson to ${path}:`, error);
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error: Unable to connect to the server. Please check your internet connection and ensure the server is running.');
+    }
     throw error;
   }
-  return data;
 }
 
 export async function putJson(path, body) {
-  const token = getAuthToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "PUT",
-    headers: { 
-      "Content-Type": "application/json",
-      ...(token && { "Authorization": `Bearer ${token}` })
-    },
-    body: JSON.stringify(body),
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    handleAuthError(response.status);
-    const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
-    const error = new Error(message);
-    error.status = response.status;
-    error.data = data;
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      handleAuthError(response.status);
+      const message = typeof data?.error === 'string' ? data.error : data?.message || `Request failed with ${response.status}`;
+      const error = new Error(message);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error(`Error in putJson to ${path}:`, error);
     throw error;
   }
-  return data;
 }
 
 const apiClient = { postJson, postJsonPublic, putJson, getJson, deleteJson, postMultipart, putMultipart };
