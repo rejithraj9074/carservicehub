@@ -1,6 +1,9 @@
 import { logout } from '../utils/auth';
 
+// Use environment variable or default to localhost for development
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
+console.log('API Base URL:', API_BASE_URL); // For debugging
 
 // Helper function to get the appropriate token
 function getAuthToken() {

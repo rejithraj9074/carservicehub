@@ -1,15 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   Box,
-  Typography,
   TextField,
   Button,
   Paper,
   Link,
   Alert,
   Divider,
-  useTheme,
-  useMediaQuery,
   FormControl,
   Select,
   MenuItem,
@@ -88,6 +85,8 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
+      setSubmitError('');
+      
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       
@@ -117,12 +116,25 @@ const Login = () => {
           redirectToDashboard(data.user.role);
         }, 1500);
       } else {
-        setSubmitError(data.message || 'Failed to authenticate with Google');
+        const errorMessage = data.message || 'Failed to authenticate with Google';
+        setSubmitError(errorMessage);
         setShowErrorSnackbar(true);
+        console.error('Google Sign-In Error:', data);
       }
     } catch (error) {
       console.error('Google sign in error:', error);
-      setSubmitError('Failed to sign in with Google. Please try again.');
+      let errorMessage = 'Failed to sign in with Google. Please try again.';
+      
+      // Handle specific Firebase errors
+      if (error.code === 'auth/popup-blocked') {
+        errorMessage = 'Popup was blocked by your browser. Please allow popups for this site.';
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        errorMessage = 'Sign in process was cancelled.';
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+      
+      setSubmitError(errorMessage);
       setShowErrorSnackbar(true);
     } finally {
       setIsLoading(false);
@@ -241,12 +253,12 @@ const Login = () => {
           />
         </Box>
         <Box className="service-icons-container">
-          <Typography className="service-title">
+          <Box className="service-title">
             CarvoHub
-          </Typography>
-          <Typography className="service-subtitle">
+          </Box>
+          <Box className="service-subtitle">
             Professional car services at your fingertips. Quality maintenance, repairs, and care for your vehicle.
-          </Typography>
+          </Box>
           
           <Box className="service-icon">
             <CarIcon />
@@ -271,12 +283,12 @@ const Login = () => {
               <Box className="login-icon-container">
                 <LockIcon className="login-icon" />
               </Box>
-              <Typography className="login-title">
+              <Box className="login-title">
                 Welcome Back
-              </Typography>
-              <Typography className="login-subtitle">
+              </Box>
+              <Box className="login-subtitle">
                 Sign in to your CarvoHub account
-              </Typography>
+              </Box>
             </Box>
 
             {submitError && (
@@ -340,7 +352,7 @@ const Login = () => {
                     </Select>
                   </FormControl>
                   {errors.role && (
-                    <Typography className="error-message">{errors.role}</Typography>
+                    <Box className="error-message">{errors.role}</Box>
                   )}
                 </Box>
               </Box>
@@ -371,12 +383,12 @@ const Login = () => {
             </Button>
 
             <Box className="register-link">
-              <Typography variant="body2">
+              <Box component="span" sx={{ fontSize: '0.875rem' }}>
                 Don't have an account?{' '}
                 <Link component={RouterLink} to="/register">
                   Sign up here
                 </Link>
-              </Typography>
+              </Box>
             </Box>
           </Paper>
         </Box>

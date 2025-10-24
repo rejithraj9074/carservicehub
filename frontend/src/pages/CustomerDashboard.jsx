@@ -17,7 +17,6 @@ import {
   Menu,
   MenuItem
 } from '@mui/material';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Bell, Menu as MenuIcon } from 'lucide-react';
 import Sidebar from '../components/dashboard/Sidebar';
@@ -96,7 +95,8 @@ const CustomerDashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/login';
+    // Use navigate instead of window.location for better SPA handling
+    navigate('/login');
   };
 
   const handleProfile = () => {
@@ -142,7 +142,7 @@ const CustomerDashboard = () => {
           <Typography variant="body1" sx={{ mt: 1 }}>
             Please log in to view your bookings, appointments, and services.
           </Typography>
-          <Button variant="contained" sx={{ mt: 2 }} onClick={() => (window.location.href = '/login')}>
+          <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/login')}>
             Go to Login
           </Button>
         </Paper>

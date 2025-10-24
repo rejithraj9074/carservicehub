@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { CssBaseline, Box } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { CssBaseline, Box, Typography, Button } from '@mui/material';
 import { CustomThemeProvider } from './contexts/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -54,6 +54,7 @@ import CarWashBookings from './pages/CarWashBookings';
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const user = JSON.parse(localStorage.getItem('user')) || {};
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
   
   // If no token, redirect to login
   if (!token) {
@@ -64,14 +65,14 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     switch (user.role) {
       case 'admin':
-        window.location.href = '/admin/dashboard';
+        navigate('/admin/dashboard');
         return null;
       case 'mechanic':
-        window.location.href = '/dashboard/mechanic';
+        navigate('/dashboard/mechanic');
         return null;
       case 'customer':
       default:
-        window.location.href = '/customer';
+        navigate('/customer');
         return null;
     }
   }
@@ -340,6 +341,22 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              
+              {/* Catch-all route for 404 errors */}
+              <Route path="*" element={
+                <Box sx={{ p: 3, textAlign: 'center' }}>
+                  <Typography variant="h4" sx={{ mb: 2 }}>Page Not Found</Typography>
+                  <Typography variant="body1" sx={{ mb: 3 }}>
+                    The page you're looking for doesn't exist.
+                  </Typography>
+                  <Button 
+                    variant="contained" 
+                    onClick={() => window.location.href = '/'}
+                  >
+                    Go Home
+                  </Button>
+                </Box>
+              } />
             </Routes>
           </Box>
           {/* Show footer only if not on customer dashboard or admin dashboard */}

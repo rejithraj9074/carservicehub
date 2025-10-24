@@ -9,36 +9,46 @@ export const isAuthenticated = () => {
   return !!localStorage.getItem('token');
 };
 
-export const redirectToDashboard = (role) => {
+export const redirectToDashboard = (navigate, role) => {
   switch (role) {
     case 'admin':
-      window.location.href = '/admin/dashboard';
+      navigate('/admin/dashboard');
       break;
     case 'mechanic':
-      window.location.href = '/dashboard/mechanic';
+      navigate('/dashboard/mechanic');
       break;
     case 'customer':
     default:
-      window.location.href = '/customer';
+      navigate('/customer');
       break;
   }
 };
 
-export const logout = () => {
+export const logout = (navigate) => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  window.location.href = '/login';
+  // Use navigate for SPA navigation instead of window.location
+  if (navigate) {
+    navigate('/login');
+  } else {
+    // Fallback to window.location if navigate is not available
+    window.location.href = '/login';
+  }
 };
 
-export const checkAuthAndRedirect = () => {
+export const checkAuthAndRedirect = (navigate) => {
   if (!isAuthenticated()) {
-    window.location.href = '/login';
+    if (navigate) {
+      navigate('/login');
+    } else {
+      window.location.href = '/login';
+    }
     return false;
   }
   
   const role = getUserRole();
   if (!role) {
-    logout();
+    logout(navigate);
     return false;
   }
   
