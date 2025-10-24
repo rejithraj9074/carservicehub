@@ -13,8 +13,7 @@ const paymentSchema = new mongoose.Schema({
   },
   razorpayPaymentId: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   razorpayOrderId: {
     type: String,
@@ -55,7 +54,7 @@ const paymentSchema = new mongoose.Schema({
 // Index for better query performance
 paymentSchema.index({ order: 1 });
 paymentSchema.index({ user: 1 });
-paymentSchema.index({ razorpayPaymentId: 1 });
+paymentSchema.index({ razorpayPaymentId: 1 }, { unique: true });
 paymentSchema.index({ createdAt: -1 });
 
 export default mongoose.model('Payment', paymentSchema);

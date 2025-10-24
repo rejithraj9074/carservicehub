@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 const accessoryOrderSchema = new mongoose.Schema({
   orderNumber: {
     type: String,
-    unique: true,
     required: false
   },
   user: {
@@ -106,7 +105,7 @@ accessoryOrderSchema.virtual('orderAge').get(function() {
 });
 
 // Index for better query performance
-accessoryOrderSchema.index({ orderNumber: 1 });
+accessoryOrderSchema.index({ orderNumber: 1 }, { unique: true });
 accessoryOrderSchema.index({ user: 1 });
 accessoryOrderSchema.index({ status: 1 });
 accessoryOrderSchema.index({ createdAt: -1 });

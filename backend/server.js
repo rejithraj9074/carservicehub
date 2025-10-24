@@ -47,27 +47,19 @@ const app = express();
 app.use(express.json()); // parse JSON
 // Configure CORS for production
 if (environment === 'production') {
-  // In production, only allow requests from your frontend domain
-  // You'll need to replace 'your-frontend-url.onrender.com' with your actual frontend URL
-  const allowedOrigins = [
-    process.env.FRONTEND_URL || "https://your-frontend-url.onrender.com",
-    "http://localhost:3000", // For local development
-    "http://localhost:5000"  // For local backend testing
-  ];
-  
+  // In production, allow requests from any origin during testing phase
+  // For production, you should restrict this to your frontend domain only
   app.use(cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true
+    origin: true, // Reflect the request origin
+    credentials: true,
+    optionsSuccessStatus: 200
   }));
+  
+  // Log CORS origin for debugging
+  app.use((req, res, next) => {
+    console.log(`CORS Origin: ${req.get('Origin')}`);
+    next();
+  });
 } else {
   // In development, allow all origins
   app.use(cors());
@@ -113,7 +105,14 @@ app.get("/", (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("❌ Error:", err.stack);
-  res.status(500).json({ message: "Internal Server Error" });
+  if (err.message && err.message.includes('CORS')) {
+    res.status(403).json({ 
+      message: "CORS Error: " + err.message,
+      detail: "This error occurs when the frontend tries to access the backend from an unauthorized origin."
+    });
+  } else {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 // Start server
