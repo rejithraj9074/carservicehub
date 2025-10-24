@@ -20,7 +20,16 @@ import publicPaymentRoutes from "./routes/publicPaymentRoutes.js";
 import publicAccessoryOrderRoutes from "./routes/publicAccessoryOrderRoutes.js";
 
 // Load environment variables
-dotenv.config();
+// In production, Render will set NODE_ENV to 'production'
+const environment = process.env.NODE_ENV || 'development';
+console.log(`Loading environment: ${environment}`);
+
+// Load the appropriate .env file
+if (environment === 'production') {
+  dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config();
+}
 
 // Debug: confirm .env is loaded
 console.log("Loaded Mongo URI:", process.env.MONGO_URI || "❌ Not found");
@@ -36,7 +45,18 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // parse JSON
-app.use(cors()); // enable CORS
+// Configure CORS for production
+if (environment === 'production') {
+  // In production, only allow requests from your frontend domain
+  // You'll need to replace 'your-frontend-url.onrender.com' with your actual frontend URL
+  app.use(cors({
+    origin: process.env.FRONTEND_URL || "https://your-frontend-url.onrender.com",
+    credentials: true
+  }));
+} else {
+  // In development, allow all origins
+  app.use(cors());
+}
 
 // Serve uploaded images statically
 import path from 'path';
@@ -84,5 +104,5 @@ app.use((err, req, res, next) => {
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
-  console.log(`✅ Server running on http://localhost:${PORT}`)
+  console.log(`✅ Server running on port ${PORT} in ${environment} mode`)
 );
