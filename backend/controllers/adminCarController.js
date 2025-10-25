@@ -116,10 +116,10 @@ const createCarListing = async (req, res) => {
 
     const carListingData = { ...req.body };
 
-    // Handle uploaded images
+    // Handle uploaded images - store relative paths instead of absolute URLs
     if (req.files && req.files.length > 0) {
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
-      carListingData.images = req.files.map(file => `${baseUrl}/uploads/${file.filename}`);
+      // Store only the filename, not the full URL
+      carListingData.images = req.files.map(file => `/uploads/${file.filename}`);
     }
 
     const carListing = new CarListing(carListingData);
