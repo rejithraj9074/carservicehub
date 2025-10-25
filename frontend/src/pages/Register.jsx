@@ -37,7 +37,8 @@ const Register = () => {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: '',
+    // Set default role to customer and hide role selection
+    role: 'customer',
   });
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
@@ -96,9 +97,7 @@ const Register = () => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    if (!formData.role) {
-      newErrors.role = 'Please select a user role';
-    }
+    // Role is fixed to 'customer', so no validation needed
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -119,23 +118,8 @@ const Register = () => {
         password: formData.password,
       };
 
-      if (formData.role === 'admin') {
-        await apiClient.postJson('/api/admin/register', payload);
-        setSuccessMessage('Admin account created! Redirecting to admin login...');
-        setShowSuccessSnackbar(true);
-        setTimeout(() => navigate('/admin/login'), 1800);
-        return;
-      }
-
+      // For registration, always create a customer account
       const result = await apiClient.postJson('/api/auth/register', payload);
-
-      if (formData.role === 'mechanic' && result?.token) {
-        // Promote the new user to mechanic role
-        localStorage.setItem('token', result.token);
-        await apiClient.putJson('/api/auth/profile', { role: 'mechanic' });
-        // Clean up token to keep behavior consistent with before
-        localStorage.removeItem('token');
-      }
 
       setSuccessMessage('Account created successfully! Redirecting to login...');
       setShowSuccessSnackbar(true);
@@ -237,7 +221,7 @@ const Register = () => {
                 Create Account
               </Typography>
               <Typography className="register-subtitle">
-                Join CarvoHub and start your journey
+                Join CarvoHub as a Customer
               </Typography>
             </Box>
 
@@ -298,29 +282,8 @@ const Register = () => {
                   />
                 </Box>
 
-                <Box className="form-field">
-                  <label htmlFor="role">User Role</label>
-                  <FormControl fullWidth size="small">
-                    <Select
-                      id="role"
-                      name="role"
-                      value={formData.role}
-                      onChange={handleChange}
-                      error={!!errors.role}
-                      displayEmpty
-                    >
-                      <MenuItem value="" disabled>
-                        Select your role
-                      </MenuItem>
-                      <MenuItem value="customer">Customer</MenuItem>
-                      <MenuItem value="mechanic">Mechanic</MenuItem>
-                      <MenuItem value="admin">Admin</MenuItem>
-                    </Select>
-                  </FormControl>
-                  {errors.role && (
-                    <Typography className="error-message">{errors.role}</Typography>
-                  )}
-                </Box>
+                {/* Hidden role field - always customer */}
+                <input type="hidden" name="role" value="customer" />
 
                 <Box className="form-field">
                   <label htmlFor="password">Password</label>

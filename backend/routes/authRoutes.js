@@ -128,7 +128,14 @@ router.post("/register", async (req, res) => {
       return res.status(409).json({ message: "Email already in use" });
     }
 
-    const user = await User.create({ name, email, password });
+    // Explicitly set role to 'customer' for all registrations
+    // This ensures only customers can register through this endpoint
+    const user = await User.create({ 
+      name, 
+      email, 
+      password,
+      role: 'customer' // Enforce customer role for all registrations
+    });
 
     const token = generateToken(user._id);
     return res.status(201).json({

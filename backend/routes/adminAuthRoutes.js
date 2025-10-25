@@ -14,37 +14,12 @@ const generateToken = (adminId) => {
   });
 };
 
-// POST /api/admin/register (optional: for initial seeding; can be disabled in prod)
+// POST /api/admin/register - DISABLED for security
+// Only admins should be created manually or through a secure process
 router.post("/register", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email and password are required" });
-    }
-
-    const existing = await Admin.findOne({ email });
-    if (existing) {
-      return res.status(409).json({ message: "Email already in use" });
-    }
-
-    const admin = await Admin.create({ name, email, password });
-    const token = generateToken(admin._id);
-
-    return res.status(201).json({
-      admin: {
-        id: admin._id,
-        name: admin.name,
-        email: admin.email,
-        role: admin.role,
-        createdAt: admin.createdAt,
-      },
-      token,
-    });
-  } catch (error) {
-    console.error("Admin register error:", error);
-    return res.status(500).json({ message: "Server error" });
-  }
+  return res.status(403).json({ 
+    message: "Admin registration is disabled. Admin accounts must be created manually by system administrators." 
+  });
 });
 
 // POST /api/admin/login
