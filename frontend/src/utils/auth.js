@@ -1,56 +1,39 @@
-// Utility functions for authentication and role-based redirection
-
-export const getUserRole = () => {
-  const user = JSON.parse(localStorage.getItem('user')) || {};
-  return user.role || null;
-};
-
-export const isAuthenticated = () => {
-  return !!localStorage.getItem('token');
-};
-
-export const redirectToDashboard = (navigate, role) => {
-  switch (role) {
-    case 'admin':
-      navigate('/admin/dashboard');
-      break;
-    case 'mechanic':
-      navigate('/dashboard/mechanic');
-      break;
-    case 'customer':
-    default:
-      navigate('/customer');
-      break;
-  }
-};
-
 export const logout = (navigate) => {
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const role = user.role;
+  
   localStorage.removeItem('token');
   localStorage.removeItem('user');
+  
   // Use navigate for SPA navigation instead of window.location
   if (navigate) {
-    navigate('/login');
+    switch (role) {
+      case 'mechanic':
+        navigate('/mechanic/login');
+        break;
+      case 'admin':
+        // Redirect admins to home page login
+        navigate('/');
+        break;
+      case 'customer':
+      default:
+        navigate('/login');
+        break;
+    }
   } else {
     // Fallback to window.location if navigate is not available
-    window.location.href = '/login';
-  }
-};
-
-export const checkAuthAndRedirect = (navigate) => {
-  if (!isAuthenticated()) {
-    if (navigate) {
-      navigate('/login');
-    } else {
-      window.location.href = '/login';
+    switch (role) {
+      case 'mechanic':
+        window.location.href = '/mechanic/login';
+        break;
+      case 'admin':
+        // Redirect admins to home page login
+        window.location.href = '/';
+        break;
+      case 'customer':
+      default:
+        window.location.href = '/login';
+        break;
     }
-    return false;
   }
-  
-  const role = getUserRole();
-  if (!role) {
-    logout(navigate);
-    return false;
-  }
-  
-  return true;
 };

@@ -47,6 +47,25 @@ import {
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/client';
 
+// Get the API base URL for constructing image URLs
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
+// Helper function to construct full image URLs
+const getFullImageUrl = (imagePath) => {
+  // If it's already a full URL, return as is
+  if (imagePath && (imagePath.startsWith('http://') || imagePath.startsWith('https://'))) {
+    return imagePath;
+  }
+  
+  // If it's a relative path, construct the full URL
+  if (imagePath && imagePath.startsWith('/')) {
+    return `${API_BASE_URL}${imagePath}`;
+  }
+  
+  // Return the original path if we can't construct a full URL
+  return imagePath;
+};
+
 const AccessoriesStore = () => {
   const navigate = useNavigate();
   const [accessories, setAccessories] = useState([]);
@@ -363,7 +382,7 @@ const AccessoriesStore = () => {
                   <CardMedia
                     component="img"
                     height="200"
-                    image={accessory.image}
+                    image={getFullImageUrl(accessory.image)}
                     alt={accessory.name}
                     sx={{ objectFit: 'cover' }}
                   />
@@ -398,46 +417,25 @@ const AccessoriesStore = () => {
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2, minHeight: 40 }}>
                     {accessory.description}
                   </Typography>
-                  
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Chip 
-                      label={accessory.category} 
-                      size="small" 
-                      color="primary" 
-                      variant="outlined"
-                    />
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <StarIcon sx={{ fontSize: 16, color: '#FFD700', mr: 0.5 }} />
-                      <Typography variant="body2">4.8</Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="h6" fontWeight={700} color="primary.main">
-                      ₹{accessory.price?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </Typography>
-                    <Typography variant="body2" color={accessory.stock > 0 ? 'success.main' : 'error.main'}>
-                      {accessory.stock > 0 ? `${accessory.stock} in stock` : 'Out of stock'}
-                    </Typography>
-                  </Box>
                 </CardContent>
-                
-                <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
-                  <Button 
-                    size="small" 
-                    variant="outlined"
-                    onClick={() => navigate(`/accessory/${accessory._id}`)}
-                  >
-                    Details
-                  </Button>
-                  <Button 
-                    size="small" 
+                <CardActions sx={{ justifyContent: 'space-between' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton onClick={() => removeFromCart(accessory._id)} size="small">
+                      <RemoveIcon />
+                    </IconButton>
+                    <Typography variant="body2" fontWeight={600}>
+                      {accessory.price.toFixed(2)}$
+                    </Typography>
+                    <IconButton onClick={() => addToCart(accessory)} size="small">
+                      <AddIcon />
+                    </IconButton>
+                  </Box>
+                  <Button
                     variant="contained"
-                    disabled={accessory.stock === 0}
                     onClick={() => addToCart(accessory)}
-                    startIcon={<AddIcon />}
+                    sx={{ height: 40 }}
                   >
-                    Add
+                    Add to Cart
                   </Button>
                 </CardActions>
               </Card>
@@ -447,184 +445,92 @@ const AccessoriesStore = () => {
       )}
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <Pagination 
-            count={totalPages} 
-            page={page} 
-            onChange={(e, value) => setPage(value)}
-            color="primary"
-            size="large"
-            showFirstButton
-            showLastButton
-          />
-        </Box>
-      )}
+      <Pagination
+        count={totalPages}
+        page={page}
+        onChange={(e, value) => setPage(value)}
+        color="primary"
+        sx={{ mt: 4 }}
+      />
 
-      {/* Shopping Cart Dialog */}
-      <Dialog 
-        open={cartOpen} 
+      {/* Cart Dialog */}
+      <Dialog
+        open={cartOpen}
         onClose={() => setCartOpen(false)}
-        maxWidth="sm"
         fullWidth
-        PaperProps={{
-          sx: { borderRadius: 3 }
-        }}
+        maxWidth="sm"
       >
-        <DialogTitle sx={{ pb: 1 }}>
+        <DialogTitle>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <ShoppingCartIcon color="primary" />
-              <Typography variant="h6" fontWeight={700}>
-                Your Shopping Cart
-              </Typography>
-            </Box>
-            <Typography variant="h6" color="primary.main" fontWeight={700}>
-              {getTotalItems()} items
+            <Typography variant="h6">
+              Shopping Cart
             </Typography>
+            <IconButton onClick={clearCart}>
+              <DeleteIcon />
+            </IconButton>
           </Box>
         </DialogTitle>
-        
-        <DialogContent dividers sx={{ minHeight: 300 }}>
+        <DialogContent>
           {cart.length === 0 ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
-              <ShoppingCartIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
               <Typography variant="h6" color="text.secondary">
                 Your cart is empty
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Add some accessories to your cart
-              </Typography>
             </Box>
           ) : (
-            <>
-              <List>
-                {cart.map((item) => (
-                  <ListItem key={item._id} sx={{ py: 2 }}>
-                    <ListItemText
-                      primary={
-                        <Typography variant="subtitle1" fontWeight={600}>
-                          {item.name}
-                        </Typography>
-                      }
-                      secondary={
-                        <Box sx={{ mt: 1 }}>
-                          <Typography variant="body2" color="text.secondary">
-                            {item.category}
-                          </Typography>
-                          <Typography variant="body1" fontWeight={700} color="primary.main" sx={{ mt: 0.5 }}>
-                            ₹{item.price?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </Typography>
-                        </Box>
-                      }
-                    />
-                    <ListItemSecondaryAction>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <IconButton 
-                          size="small" 
-                          onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                        >
-                          <RemoveIcon />
-                        </IconButton>
-                        <Typography variant="body1" sx={{ minWidth: 30, textAlign: 'center' }}>
-                          {item.quantity}
-                        </Typography>
-                        <IconButton 
-                          size="small" 
-                          onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                        >
-                          <AddIcon />
-                        </IconButton>
-                        <IconButton 
-                          size="small" 
-                          color="error"
-                          onClick={() => removeFromCart(item._id)}
-                          sx={{ ml: 2 }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Box>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </List>
-              
+            <List>
+              {cart.map((item) => (
+                <ListItem key={item._id}>
+                  <ListItemText
+                    primary={item.name}
+                    secondary={`Price: ${item.price.toFixed(2)}$`}
+                  />
+                  <ListItemSecondaryAction>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <IconButton onClick={() => updateQuantity(item._id, item.quantity - 1)} size="small">
+                        <RemoveIcon />
+                      </IconButton>
+                      <Typography variant="body2" fontWeight={600}>
+                        {item.quantity}
+                      </Typography>
+                      <IconButton onClick={() => updateQuantity(item._id, item.quantity + 1)} size="small">
+                        <AddIcon />
+                      </IconButton>
+                    </Box>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
               <Divider sx={{ my: 2 }} />
-              
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h6" fontWeight={700}>
-                  Total:
+                <Typography variant="body2" color="text.secondary">
+                  Total Items: {getTotalItems()}
                 </Typography>
-                <Typography variant="h6" fontWeight={700} color="primary.main">
-                  ₹{getTotalPrice().toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <Typography variant="body2" fontWeight={600}>
+                  Total Price: {getTotalPrice().toFixed(2)}$
                 </Typography>
               </Box>
-            </>
+            </List>
           )}
         </DialogContent>
-        
-        <DialogActions sx={{ p: 2 }}>
-          <Button 
-            onClick={() => setCartOpen(false)} 
-            variant="outlined"
-          >
-            Continue Shopping
+        <DialogActions>
+          <Button onClick={() => setCartOpen(false)} color="primary">
+            Close
           </Button>
-          {cart.length > 0 && (
-            <>
-              <Button 
-                onClick={clearCart}
-                color="error"
-              >
-                Clear Cart
-              </Button>
-              <Button 
-                onClick={handleCheckout}
-                variant="contained"
-                startIcon={<ShoppingCartCheckoutIcon />}
-                sx={{ minWidth: 150 }}
-              >
-                Checkout
-              </Button>
-            </>
-          )}
+          <Button onClick={handleCheckout} variant="contained" color="primary">
+            Checkout
+          </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for notifications */}
+      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert 
-          onClose={handleCloseSnackbar} 
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-
-      {/* Floating Action Button for quick cart access on mobile */}
-      {getTotalItems() > 0 && (
-        <Fab
-          color="primary"
-          aria-label="cart"
-          onClick={() => setCartOpen(true)}
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            display: { xs: 'flex', md: 'none' }
-          }}
-        >
-          <Badge badgeContent={getTotalItems()} color="error">
-            <ShoppingCartIcon />
-          </Badge>
-        </Fab>
-      )}
+        message={snackbar.message}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        severity={snackbar.severity}
+      />
     </Container>
   );
 };

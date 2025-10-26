@@ -128,10 +128,10 @@ const createAccessory = async (req, res) => {
 
     const accessoryData = { ...req.body };
 
-    // Handle uploaded image
+    // Handle uploaded image - store relative path instead of absolute URL
     if (req.file) {
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
-      accessoryData.image = `${baseUrl}/uploads/${req.file.filename}`;
+      // Store only the filename, not the full URL
+      accessoryData.image = `/uploads/${req.file.filename}`;
     }
 
     // Parse arrays if passed as JSON strings
@@ -203,10 +203,10 @@ const updateAccessory = async (req, res) => {
 
     const updateData = { ...req.body };
 
-    // Handle uploaded image
+    // Handle uploaded image - store relative path instead of absolute URL
     if (req.file) {
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
-      updateData.image = `${baseUrl}/uploads/${req.file.filename}`;
+      // Store only the filename, not the full URL
+      updateData.image = `/uploads/${req.file.filename}`;
     }
 
     // Parse arrays if passed as JSON strings

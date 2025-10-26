@@ -27,6 +27,25 @@ import {
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import apiClient from '../api/client';
 
+// Get the API base URL for constructing image URLs
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
+// Helper function to construct full image URLs
+const getFullImageUrl = (imagePath) => {
+  // If it's already a full URL, return as is
+  if (imagePath && (imagePath.startsWith('http://') || imagePath.startsWith('https://'))) {
+    return imagePath;
+  }
+  
+  // If it's a relative path, construct the full URL
+  if (imagePath && imagePath.startsWith('/')) {
+    return `${API_BASE_URL}${imagePath}`;
+  }
+  
+  // Return the original path if we can't construct a full URL
+  return imagePath;
+};
+
 const AccessoryDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -178,7 +197,7 @@ const AccessoryDetail = () => {
               <CardMedia
                 component="img"
                 height="400"
-                image={accessory.image}
+                image={getFullImageUrl(accessory.image)}
                 alt={accessory.name}
                 sx={{ objectFit: 'contain' }}
               />

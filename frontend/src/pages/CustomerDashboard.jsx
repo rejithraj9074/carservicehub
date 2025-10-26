@@ -27,6 +27,7 @@ import SimpleRescheduleModal from '../components/dashboard/SimpleRescheduleModal
 import apiClient from '../api/client';
 import ServiceShortcuts from '../components/dashboard/ServiceShortcuts';
 import PaymentsHistory from '../components/dashboard/PaymentsHistory';
+import { logout } from '../utils/auth';
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();
@@ -93,10 +94,7 @@ const CustomerDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    // Use navigate instead of window.location for better SPA handling
-    navigate('/login');
+    logout(navigate);
   };
 
   const handleProfile = () => {

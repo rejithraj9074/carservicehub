@@ -97,6 +97,16 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/payment", publicPaymentRoutes);
 app.use("/api/accessory-orders", publicAccessoryOrderRoutes);
 
+// Serve frontend static files in production
+if (environment === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  
+  // Handle React Router client-side routing
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  });
+}
+
 // Health check / default route
 app.get("/", (req, res) => {
   res.send("🚀 CarvoHub Backend API is running...");

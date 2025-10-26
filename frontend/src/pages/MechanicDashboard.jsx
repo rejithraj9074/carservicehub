@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/client';
+import { logout } from '../utils/auth';
 
 const StatusChip = ({ status }) => {
   const colorMap = {
@@ -110,9 +111,7 @@ const MechanicDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
+    logout(navigate);
   };
 
   const handleProfile = () => {

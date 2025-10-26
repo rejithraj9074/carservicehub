@@ -75,6 +75,7 @@ import AccessoriesManagement from '../components/AccessoriesManagement';
 import AccessoryOrdersManagement from '../components/AccessoryOrdersManagement';
 import apiClient from '../api/client';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../utils/auth';
 
 const CarListingsEmbedded = () => {
   const navigate = useNavigate();
@@ -418,6 +419,11 @@ const AdminDashboard = () => {
     setProfileAnchorEl(null);
   };
 
+  const handleLogout = () => {
+    logout(navigate);
+    handleProfileMenuClose();
+  };
+
   const handleNotificationMenuOpen = (event) => {
     setNotificationAnchorEl(event.currentTarget);
   };
@@ -687,7 +693,7 @@ const AdminDashboard = () => {
                 Help
               </MenuItem>
               <Divider />
-              <MenuItem onClick={handleProfileMenuClose}>
+              <MenuItem onClick={handleLogout}>
                 <LogoutIcon sx={{ mr: 1 }} />
                 Logout
               </MenuItem>
